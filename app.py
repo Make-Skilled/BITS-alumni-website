@@ -8,7 +8,6 @@ import os
 app = Flask(__name__)
 app.secret_key = "1234567890"
 
-
 client = MongoClient("mongodb://127.0.0.1:27017/")
 db = client["bits-alumni"]
 users = db["users"]
@@ -18,9 +17,6 @@ jobs = db["jobs"]
 news = db["news"]
 fundraising = db["fundraising"]
 donations = db["donations"]
-
-
-
 
 ADMIN_EMAIL = "admin@bitsalumni.com"
 ADMIN_PASSWORD = "admin123"
@@ -32,8 +28,6 @@ def landing():
         user = users.find_one({"_id": ObjectId(user_id)})
         return render_template("home.html", user=user)
     return render_template("landing.html")
-
-
 
 @app.route("/signup")
 def signup():
@@ -75,8 +69,6 @@ def admin_dashboard():
         funds=all_funds, 
         news=all_news
     )
-
-
 
 @app.route("/add-event", methods=["GET", "POST"])
 def add_event():
@@ -373,6 +365,21 @@ def donate():
 
     return jsonify({"message": f"Successfully donated ${amount}!", "new_total": new_total})
 
+@app.route("/get-user-details/<user_name>")
+def get_user_details(user_name):
+    user = users.find_one({"name": user_name}, {"_id": 0, "password": 0})  # Exclude sensitive data
+    if user:
+        return jsonify(user)
+    return jsonify({"error": "User not found"}), 404
+
+
+@app.route("/alumni-network")
+def alumni_network():
+    if "user_id" not in session:
+        return redirect(url_for("loginpage"))
+
+    all_users = users.find({}, {"_id": 0, "name": 1, "email": 1, "mobile": 1, "department": 1, "graduation_year": 1})
+    return render_template("alumni_network.html", users=all_users)
 
 
 @app.route("/logout")

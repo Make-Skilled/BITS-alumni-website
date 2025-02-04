@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script>
+        function searchUsers() {
+            let input = document.getElementById("search").value.toLowerCase();
+            let cards = document.getElementsByClassName("alumni-card");
+
+            for (let card of cards) {
+                let name = card.getAttribute("data-name").toLowerCase();
+                let email = card.getAttribute("data-email").toLowerCase();
+                let year = card.getAttribute("data-year").toLowerCase();
+
+                if (name.includes(input) || email.includes(input) || year.includes(input)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="text-2xl font-bold text-blue-800">BITS</div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-800">Home</a>
+                    <a href="/fundraising" class="text-gray-700 hover:text-blue-800">Fund Raising</a>
+                    <a href="/events" class="text-gray-700 hover:text-blue-800">Events</a>
+                    <a href="/news" class="text-gray-700 hover:text-blue-800">News</a>
+                    <a href="/gallery" class="text-gray-700 hover:text-blue-800">Gallery</a>
+                    <a href="/logout" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-10 px-4">
+        <h1 class="text-3xl font-bold text-gray-700">Alumni Network</h1>
+        <input type="text" id="search" onkeyup="searchUsers()" class="mt-4 px-4 py-2 border border-gray-300 rounded-md w-full" placeholder="Search by name, email, or passout year...">
+        
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for user in users %}
+            <div class="p-6 bg-white rounded-lg shadow-md alumni-card" 
+                data-name="{{ user.name }}" 
+                data-email="{{ user.email }}" 
+                data-year="{{ user.graduation_year }}">
+                <h3 class="text-xl font-semibold text-blue-800">{{ user.name }}</h3>
+                <p class="text-gray-600"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="text-gray-600"><strong>Mobile:</strong> {{ user.mobile }}</p>
+                <p class="text-gray-600"><strong>Department:</strong> {{ user.department }}</p>
+                <p class="text-gray-600"><strong>Graduation Year:</strong> {{ user.graduation_year }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
