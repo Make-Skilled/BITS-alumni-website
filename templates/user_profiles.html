@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profiles</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="p-6">
+        <h1 class="text-2xl font-bold">User Profiles</h1>
+        <ul class="mt-4">
+            {% for user in users %}
+                <li class="mb-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">{{ user.name }} - {{ user.email }}</span>
+                        <a href="/view-user/{{ user._id }}" class="bg-blue-800 text-white px-4 py-2 rounded-md">View Details</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job Referral - BITS Alumni Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-blue-800">BITS</div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-800">Home</a>
+                    <a href="/events" class="text-gray-700 hover:text-blue-800">Events</a>
+                    <a href="/gallery" class="text-gray-700 hover:text-blue-800">Gallery</a>
+                    <a href="/job-referrals" class="text-gray-700 hover:text-blue-800">Job Referrals</a>
+                    <a href="/logout" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add Job Referral Section -->
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        <h2 class="text-2xl font-bold text-gray-700">Add Job Referral</h2>
+        
+        <form action="/add-job-referral" method="POST" class="mt-6 bg-white p-6 rounded-lg shadow-md">
+            <label class="block text-gray-700">Job Title</label>
+            <input type="text" name="title" class="w-full p-2 border border-gray-300 rounded-lg mt-1" required>
+
+            <label class="block text-gray-700 mt-4">Company</label>
+            <input type="text" name="company" class="w-full p-2 border border-gray-300 rounded-lg mt-1" required>
+
+            <label class="block text-gray-700 mt-4">Location</label>
+            <input type="text" name="location" class="w-full p-2 border border-gray-300 rounded-lg mt-1" required>
+
+            <label class="block text-gray-700 mt-4">Description</label>
+            <textarea name="description" class="w-full p-2 border border-gray-300 rounded-lg mt-1" required></textarea>
+
+            <button type="submit" class="mt-4 bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-700">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

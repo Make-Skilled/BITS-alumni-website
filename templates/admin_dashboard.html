@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <div class="flex gap-4">
+            <a href="#" class="hover:text-gray-300">Home</a>
+            <a href="/user-profiles" class="hover:text-gray-300">Users</a>
+            <a href="#" class="hover:text-gray-300">Settings</a>
+            <a href="/logout" class="hover:text-gray-300">Logout</a>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md h-screen p-5 hidden md:block">
+            <h2 class="text-xl font-bold mb-4">Manage</h2>
+            <nav>
+                <ul class="space-y-3">
+                    <li><a href="/add-event" class="block bg-blue-600 text-white px-4 py-2 rounded-md text-center">Add Event</a></li>
+                    <li><a href="/add-gallery-image" class="block bg-green-600 text-white px-4 py-2 rounded-md text-center">Add Image</a></li>
+                    <li><a href="/add-news" class="block bg-yellow-500 text-white px-4 py-2 rounded-md text-center">Add News</a></li>
+                    <li><a href="/add-fund" class="block bg-red-600 text-white px-4 py-2 rounded-md text-center">Add Fund</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Events Section -->
+            <section class="bg-white p-6 shadow-md rounded-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for event in events %}
+                    <div class="border p-4 rounded-lg shadow-lg bg-gray-50">
+                        <h3 class="text-lg font-bold">{{ event.title }}</h3>
+                        <p class="text-sm text-gray-500">{{ event.date }}</p>
+                        <p class="mt-2 text-gray-700">{{ event.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section class="bg-white p-6 shadow-md rounded-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Gallery</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {% for image in gallery %}
+                    <div class="overflow-hidden rounded-lg shadow-lg">
+                        <img src="{{ url_for('static', filename='uploads/' ~ image.image) }}" alt="Gallery Image" class="w-full h-40 object-cover rounded-md">
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Fundraising Section -->
+            <section class="bg-white p-6 shadow-md rounded-md mb-6">
+                <h2 class="text-2xl font-bold mb-4">Fundraising</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for fund in funds %}
+                    <div class="border p-4 rounded-lg shadow-lg bg-gray-50">
+                        <h3 class="text-lg font-bold">{{ fund.name }}</h3>
+                        <p class="mt-2 text-gray-600">{{ fund.description }}</p>
+                        <p class="mt-2 text-green-600 font-bold">Collected: ${{ fund.money_collected }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section class="bg-white p-6 shadow-md rounded-md">
+                <h2 class="text-2xl font-bold mb-4">News</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for item in news %}
+                    <div class="border p-4 rounded-lg shadow-lg bg-gray-50">
+                        <h3 class="text-lg font-bold">{{ item.title }}</h3>
+                        <p class="text-sm text-gray-500">{{ item.date }}</p>
+                        <p class="mt-2 text-gray-700">{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>

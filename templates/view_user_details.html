@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="p-6">
+        <h1 class="text-2xl font-bold">User Details</h1>
+
+        <div class="mt-6">
+            <p><strong>Name:</strong> {{ user.name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Roll Number:</strong> {{ user.roll_number }}</p>
+            <p><strong>Department:</strong> {{ user.department }}</p>
+            <p><strong>Graduation Year:</strong> {{ user.graduation_year }}</p>
+            <p><strong>Gender:</strong> {{ user.gender }}</p>
+            <p><strong>Occupation:</strong> {{ user.occupation }}</p>
+            <p><strong>Mobile:</strong> {{ user.mobile }}</p>
+            <p><strong>User Type:</strong> {{ user.user_type }}</p>
+        </div>
+
+        <a href="/user-profiles" class="bg-blue-800 text-white px-4 py-2 rounded-md mt-4 inline-block">Back to User Profiles</a>
+    </div>
+</body>
+</html>

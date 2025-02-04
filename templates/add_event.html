@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Event</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="p-6">
+        <h2 class="text-2xl font-bold">Add Event</h2>
+        <form action="/add-event" method="POST" class="space-y-4">
+            <div>
+                <label for="event_title" class="block text-sm">Event Title</label>
+                <input type="text" name="event_title" id="event_title" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
+            </div>
+            <div>
+                <label for="event_date" class="block text-sm">Event Date</label>
+                <input type="date" name="event_date" id="event_date" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
+            </div>
+            <div>
+                <label for="event_description" class="block text-sm">Event Description</label>
+                <textarea name="event_description" id="event_description" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></textarea>
+            </div>
+            <div>
+                <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md">Add Event</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

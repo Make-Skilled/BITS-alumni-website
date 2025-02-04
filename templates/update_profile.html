@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 py-10">
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-700 text-center">Update Profile</h2>
+        <form action="/update-profile" method="POST" class="mt-6">
+            <label class="block text-gray-600">Name</label>
+            <input type="text" name="name" value="{{ user.name }}" class="w-full p-2 border rounded-lg" required>
+            
+            <label class="block text-gray-600 mt-4">Email</label>
+            <input type="email" name="email" value="{{ user.email }}" class="w-full p-2 border rounded-lg" readonly>
+            
+            <label class="block text-gray-600 mt-4">Roll Number</label>
+            <input type="text" name="roll_number" value="{{ user.roll_number }}" class="w-full p-2 border rounded-lg" required>
+            
+            <label class="block text-gray-600 mt-4">Department</label>
+            <input type="text" name="department" value="{{ user.department }}" class="w-full p-2 border rounded-lg">
+            
+            <label class="block text-gray-600 mt-4">Graduation Year</label>
+            <input type="number" name="graduation_year" value="{{ user.graduation_year }}" class="w-full p-2 border rounded-lg">
+            
+            <label class="block text-gray-600 mt-4">Gender</label>
+            <select name="gender" class="w-full p-2 border rounded-lg">
+                <option value="Male" {% if user.gender=='Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if user.gender=='Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if user.gender=='Other' %}selected{% endif %}>Other</option>
+            </select>
+            
+            <label class="block text-gray-600 mt-4">Occupation</label>
+            <input type="text" name="occupation" value="{{ user.occupation }}" class="w-full p-2 border rounded-lg">
+            
+            <label class="block text-gray-600 mt-4">Mobile Number</label>
+            <input type="text" name="mobile" value="{{ user.mobile }}" class="w-full p-2 border rounded-lg">
+            
+            <label class="block text-gray-600 mt-4">User Type</label>
+            <select name="user_type" class="w-full p-2 border rounded-lg">
+                <option value="Pursuing" {% if user.user_type=='Pursuing' %}selected{% endif %}>Pursuing</option>
+                <option value="Passed Out" {% if user.user_type=='Passed Out' %}selected{% endif %}>Passed Out</option>
+            </select>
+            
+            <button type="submit" class="mt-6 w-full bg-blue-600 text-white p-2 rounded-lg">Update Profile</button>
+        </form>
+    </div>
+</body>
+</html>

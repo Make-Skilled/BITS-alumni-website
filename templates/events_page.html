@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcoming Events - BITS Alumni Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-blue-800">BITS</div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/home" class="text-gray-700 hover:text-blue-800">Home</a>
+                    <a href="/events" class="text-gray-700 hover:text-blue-800">Events</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-800">News</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-800">Gallery</a>
+                    <a href="#" class="text-gray-700 hover:text-blue-800">Job Referrals</a>
+                    <a href="/logout" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Section -->
+    <div class="bg-blue-800 text-white py-16 text-center">
+        <h1 class="text-4xl font-bold">Upcoming Events</h1>
+        <p class="mt-2 text-lg">Join us for these exciting events and stay connected with the BITS alumni community.</p>
+    </div>
+
+    <!-- Events Section -->
+    <div class="bg-gray-100 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-700">Our Events</h2>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for event in events %}
+                    <div class="p-6 bg-white rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-blue-800">{{ event.title }}</h3>
+                        <p class="text-gray-600 mt-2">{{ event.description }}</p>
+                        <p class="text-gray-500 mt-2">Date: {{ event.date }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

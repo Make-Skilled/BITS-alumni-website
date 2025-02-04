@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Fund</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="p-6">
+        <h1 class="text-2xl font-bold">Add Fund</h1>
+        <form action="/add-fund" method="POST">
+            <label class="block mt-4">Fund Name:</label>
+            <input type="text" name="fund_name" required class="border p-2 rounded w-full">
+
+            <label class="block mt-4">Fund Description:</label>
+            <textarea name="fund_description" required class="border p-2 rounded w-full"></textarea>
+
+            <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md mt-4">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

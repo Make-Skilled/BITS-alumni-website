@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - BITS Alumni</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="text-2xl font-bold text-blue-800">BITS</div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/home" class="text-gray-700 hover:text-blue-800">Home</a>
+                    <a href="/events" class="text-gray-700 hover:text-blue-800">Events</a>
+                    <a href="/gallery" class="text-gray-700 hover:text-blue-800">Gallery</a>
+                    <a href="/logout" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Gallery Header -->
+    <div class="bg-blue-800 text-white py-16 text-center">
+        <h1 class="text-4xl font-bold">Gallery</h1>
+        <p class="mt-2 text-lg">Explore the memorable moments from our BITS alumni events.</p>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="bg-gray-100 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-700">Our Moments</h2>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for image in images %}
+                    <div class="p-4 bg-white rounded-lg shadow-md">
+                        <img src="{{ url_for('static', filename='uploads/' + image) }}" 
+                             alt="Gallery Image" class="w-full h-60 object-cover rounded-lg">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
