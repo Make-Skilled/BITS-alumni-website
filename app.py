@@ -189,6 +189,7 @@ def update_profile():
             "graduation_year": request.form.get("graduation_year"),
             "gender": request.form.get("gender"),
             "occupation": request.form.get("occupation"),
+            "organisation":request.form.get("organisation"),
             "mobile": request.form.get("mobile"),
             "user_type": request.form.get("user_type")
         }
@@ -378,7 +379,7 @@ def alumni_network():
     if "user_id" not in session:
         return redirect(url_for("loginpage"))
 
-    all_users = users.find({}, {"_id": 0, "name": 1, "email": 1, "mobile": 1, "department": 1, "graduation_year": 1})
+    all_users = users.find({}, {"_id": 0,"password":0})
     return render_template("alumni_network.html", users=all_users)
 
 

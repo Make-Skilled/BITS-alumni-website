@@ -22,10 +22,31 @@
                 }
             }
         }
+
+        function openModal(event) {
+            let card = event.currentTarget;
+            
+            document.getElementById("modal-name").innerText = card.getAttribute("data-name");
+            document.getElementById("modal-roll").innerText = card.getAttribute("data-roll");
+            document.getElementById("modal-department").innerText = card.getAttribute("data-department");
+            document.getElementById("modal-year").innerText = card.getAttribute("data-year");
+            document.getElementById("modal-gender").innerText = card.getAttribute("data-gender");
+            document.getElementById("modal-occupation").innerText = card.getAttribute("data-occupation");
+            document.getElementById("modal-organisation").innerText = card.getAttribute("data-organisation");
+            document.getElementById("modal-mobile").innerText = card.getAttribute("data-mobile");
+            document.getElementById("modal-user-type").innerText = card.getAttribute("data-user-type");
+
+            document.getElementById("modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.add("hidden");
+        }
     </script>
 </head>
 <body class="bg-gray-100">
 
+    <!-- Navbar -->
     <nav class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
@@ -42,16 +63,25 @@
         </div>
     </nav>
 
+    <!-- Alumni Profiles Section -->
     <div class="max-w-7xl mx-auto py-10 px-4">
         <h1 class="text-3xl font-bold text-gray-700">Alumni Network</h1>
         <input type="text" id="search" onkeyup="searchUsers()" class="mt-4 px-4 py-2 border border-gray-300 rounded-md w-full" placeholder="Search by name, email, or passout year...">
         
         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             {% for user in users %}
-            <div class="p-6 bg-white rounded-lg shadow-md alumni-card" 
+            <div class="p-6 bg-white rounded-lg shadow-md alumni-card cursor-pointer" 
+                onclick="openModal(event)"
                 data-name="{{ user.name }}" 
-                data-email="{{ user.email }}" 
-                data-year="{{ user.graduation_year }}">
+                data-roll="{{ user.roll_number }}"
+                data-department="{{ user.department }}" 
+                data-year="{{ user.graduation_year }}"
+                data-gender="{{ user.gender }}"
+                data-occupation="{{ user.occupation }}"
+                data-organisation="{{ user.organisation }}"
+                data-mobile="{{ user.mobile }}"
+                data-user-type="{{ user.user_type }}">
+                
                 <h3 class="text-xl font-semibold text-blue-800">{{ user.name }}</h3>
                 <p class="text-gray-600"><strong>Email:</strong> {{ user.email }}</p>
                 <p class="text-gray-600"><strong>Mobile:</strong> {{ user.mobile }}</p>
@@ -59,6 +89,27 @@
                 <p class="text-gray-600"><strong>Graduation Year:</strong> {{ user.graduation_year }}</p>
             </div>
             {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 class="text-2xl font-bold text-blue-800">Alumni Details</h2>
+            <div class="mt-4">
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>Roll Number:</strong> <span id="modal-roll"></span></p>
+                <p><strong>Department:</strong> <span id="modal-department"></span></p>
+                <p><strong>Graduation Year:</strong> <span id="modal-year"></span></p>
+                <p><strong>Gender:</strong> <span id="modal-gender"></span></p>
+                <p><strong>Occupation:</strong> <span id="modal-occupation"></span></p>
+                <p><strong>Organisation:</strong> <span id="modal-organisation"></span></p>
+                <p><strong>Mobile:</strong> <span id="modal-mobile"></span></p>
+                <p><strong>User Type:</strong> <span id="modal-user-type"></span></p>
+            </div>
+            <div class="mt-4 text-right">
+                <button onclick="closeModal()" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Close</button>
+            </div>
         </div>
     </div>
 
