@@ -6,6 +6,7 @@
     <title>Fund Raising - BITS Alumni Network</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 -->
 </head>
 <body>
 
@@ -38,7 +39,7 @@
             <!-- Fundraising cards will be injected here -->
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function () {
             function loadFunds() {
@@ -51,7 +52,7 @@
                                 <p class="text-gray-600 mt-2">${fund.description}</p>
                                 <p class="text-gray-500 mt-2">Collected: <span id="fund-${fund._id}">$${fund.money_collected}</span></p>
                                 <input type="number" id="donate-${fund._id}" class="mt-3 w-full border p-2 rounded-md" placeholder="Enter amount to donate">
-                                <button class="donate-btn mt-2 w-full bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-700" data-fund-id="${fund._id}">Donate</button>
+                                <button class="donate-btn mt-2 w-full bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300" data-fund-id="${fund._id}">Donate</button>
                             </div>
                         `);
                     });
@@ -67,12 +68,13 @@
                 let amount = parseInt($(`#donate-${fundId}`).val());
 
                 if (isNaN(amount) || amount <= 0) {
-                    alert("Please enter a valid amount.");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Invalid Amount",
+                        text: "Please enter a valid donation amount!",
+                    });
                     return;
                 }
-
-                console.log("Donate button clicked for fund ID:", fundId);
-                console.log("Sending donation request with amount:", amount);
 
                 $.ajax({
                     url: "/donate",
@@ -82,18 +84,26 @@
                         amount: amount 
                     },
                     success: function (response) {
-                        alert(response.message);
-                        loadFunds();
+                        Swal.fire({
+                            icon: "success",
+                            title: "Thank You!",
+                            text: response.message,
+                        }).then(() => {
+                            loadFunds();
+                        });
                     },
                     error: function (xhr) {
-                        alert(xhr.responseJSON ? xhr.responseJSON.message : "An error occurred");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: xhr.responseJSON ? xhr.responseJSON.message : "An error occurred",
+                        });
                     }
                 });
             }
 
             loadFunds();
         });
-
     </script>
 
 </body>

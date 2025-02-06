@@ -84,7 +84,8 @@ def add_event():
             "title": event_title,
             "date": event_date,
             "description": event_description,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow(),
+            "participants": []
         })
         return redirect(url_for("admin_dashboard"))
 
