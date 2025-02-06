@@ -91,6 +91,20 @@ def add_event():
 
     return render_template("add_event.html")
 
+@app.route("/view-attendees/<event_id>")
+def view_attendees(event_id):
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+
+    event = events.find_one({"_id": ObjectId(event_id)})
+    if not event:
+        return "Event not found", 404
+
+    attendees = event.get("participants", [])  # List of emails
+
+    return render_template("view_attendees.html", event=event, attendees=attendees)
+
+
 
 @app.route("/add-gallery-image", methods=["GET", "POST"])
 def add_gallery_image():
@@ -201,20 +215,42 @@ def update_profile():
 
 @app.route("/events")
 def events_page():
-    # Fetch all events from MongoDB
     all_events = events.find()
     
-    # Convert MongoDB cursor to a list of events
     event_list = []
     for event in all_events:
         event_list.append({
+            "_id": str(event["_id"]),  # Convert ObjectId to string
             "title": event["title"],
             "date": event["date"],
             "description": event["description"]
         })
 
-    # Render the events page with event data
     return render_template("events_page.html", events=event_list)
+
+
+@app.route("/api/join-event/<event_id>", methods=["POST"])
+def join_event(event_id):
+    print(f"Received request to join event: {event_id}")  # Debugging
+    if "user_id" not in session:
+        return jsonify({"message": "User not logged in"}), 401
+
+    user_email = session.get("email")
+    event = events.find_one({"_id": ObjectId(event_id)})
+    
+    if not event:
+        return jsonify({"message": "Event not found"}), 404
+
+    if user_email in event.get("participants", []):
+        return jsonify({"message": "User already joined this event"}), 400
+
+    events.update_one(
+        {"_id": ObjectId(event_id)},
+        {"$push": {"participants": user_email}}
+    )
+
+    return jsonify({"message": "Successfully joined event!"})
+
 
 
 @app.route("/gallery")

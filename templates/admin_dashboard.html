@@ -36,18 +36,26 @@
         <!-- Main Content -->
         <main class="flex-1 p-6">
             <!-- Events Section -->
-            <section class="bg-white p-6 shadow-md rounded-md mb-6">
-                <h2 class="text-2xl font-bold mb-4">Events</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {% for event in events %}
-                    <div class="border p-4 rounded-lg shadow-lg bg-gray-50">
-                        <h3 class="text-lg font-bold">{{ event.title }}</h3>
-                        <p class="text-sm text-gray-500">{{ event.date }}</p>
-                        <p class="mt-2 text-gray-700">{{ event.description }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </section>
+           <!-- Events Section -->
+<section class="bg-white p-6 shadow-md rounded-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">Events</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for event in events %}
+        <div class="border p-4 rounded-lg shadow-lg bg-gray-50">
+            <h3 class="text-lg font-bold">{{ event.title }}</h3>
+            <p class="text-sm text-gray-500">{{ event.date }}</p>
+            <p class="mt-2 text-gray-700">{{ event.description }}</p>
+            
+            <!-- Attendees Button -->
+            <a href="{{ url_for('view_attendees', event_id=event._id) }}" 
+               class="block mt-4 text-center bg-blue-600 text-white px-4 py-2 rounded-md">
+                View Attendees
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
 
             <!-- Gallery Section -->
             <section class="bg-white p-6 shadow-md rounded-md mb-6">

@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
+       
     <div class="p-6">
         <h2 class="text-2xl font-bold">Add Event</h2>
         <form action="/add-event" method="POST" class="space-y-4">
@@ -25,7 +26,9 @@
             <div>
                 <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-md">Add Event</button>
             </div>
-        </form>
+        </form><a href="{{ url_for('admin_dashboard') }}" class="block mt-6 w-40 mx-auto text-center bg-blue-600 text-white px-4 py-2 rounded-md">
+        Back to Dashboard
+    </a> 
     </div>
 </body>
 </html>

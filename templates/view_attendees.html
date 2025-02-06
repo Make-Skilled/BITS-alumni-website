@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Attendees</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Attendees for {{ event.title }}</h2>
+
+        {% if attendees %}
+        <table class="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="border border-gray-300 px-4 py-2">#</th>
+                    <th class="border border-gray-300 px-4 py-2">Attendee Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for email in attendees %}
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">{{ loop.index }}</td>
+                    <td class="border border-gray-300 px-4 py-2">{{ email }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-gray-600">No attendees have joined this event yet.</p>
+        {% endif %}
+
+        <a href="{{ url_for('admin_dashboard') }}" class="block mt-6 text-center bg-blue-600 text-white px-4 py-2 rounded-md">
+            Back to Dashboard
+        </a>
+    </div>
+</body>
+</html>
