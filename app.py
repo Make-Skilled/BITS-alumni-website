@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from flask_socketio import SocketIO, emit, join_room
 
 app = Flask(__name__)
 app.secret_key = "1234567890"
@@ -17,9 +18,14 @@ jobs = db["jobs"]
 news = db["news"]
 fundraising = db["fundraising"]
 donations = db["donations"]
+chats = db["chats"]
+chat_messages = db["chat_messages"]
 
 ADMIN_EMAIL = "admin@bitsalumni.com"
 ADMIN_PASSWORD = "admin123"
+
+# Initialize SocketIO
+socketio = SocketIO(app)
 
 @app.route("/")
 def landing():
@@ -160,7 +166,8 @@ def signup_data():
         if users.find_one({"email": email}):
             return "Email already exists", 400
         
-        hashed_password = generate_password_hash(password)
+        # Use pbkdf2:sha256 method instead of scrypt
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         users.insert_one({
             "name": name,
             "email": email,
@@ -416,7 +423,24 @@ def alumni_network():
     if "user_id" not in session:
         return redirect(url_for("loginpage"))
 
-    all_users = users.find({}, {"_id": 0,"password":0})
+    current_user_id = ObjectId(session["user_id"])
+    
+    # Find all users except the current user
+    # Fix: Use either all inclusion or all exclusion in projection
+    all_users = users.find(
+        {"_id": {"$ne": current_user_id}},
+        {
+            "_id": 1,  # Include _id
+            "name": 1,
+            "email": 1,
+            "department": 1,
+            "graduation_year": 1,
+            "occupation": 1,
+            "organisation": 1,
+            "mobile": 1
+        }
+    )
+    
     return render_template("alumni_network.html", users=all_users)
 
 
@@ -429,5 +453,223 @@ def logout():
     return redirect(url_for("landing"))
 
 
-if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+@app.route("/chat/<receiver_id>")
+def chat(receiver_id):
+    if "user_id" not in session:
+        return redirect(url_for("loginpage"))
+    
+    try:
+        current_user_id = session["user_id"]
+        receiver = users.find_one({"_id": ObjectId(receiver_id)})
+        
+        if not receiver:
+            return "User not found", 404
+        
+        # Mark all messages from this sender as read
+        chat_messages.update_many(
+            {
+                "sender_id": receiver_id,
+                "receiver_id": current_user_id,
+                "read": False
+            },
+            {"$set": {"read": True}}
+        )
+        
+        # Emit event to update unread count
+        socketio.emit('messages_read', {}, room=current_user_id)
+        
+        # Get chat history
+        chat_history = chat_messages.find({
+            "$or": [
+                {"sender_id": current_user_id, "receiver_id": receiver_id},
+                {"sender_id": receiver_id, "receiver_id": current_user_id}
+            ]
+        }).sort("timestamp", 1)
+        
+        return render_template(
+            "chat.html",
+            receiver=receiver,
+            current_user_id=current_user_id,
+            chat_history=chat_history
+        )
+    except Exception as e:
+        print(f"Chat error: {str(e)}")
+        return "Error loading chat", 500
+
+@app.route("/chats")
+def chats():
+    if "user_id" not in session:
+        return redirect(url_for("loginpage"))
+    
+    current_user_id = session["user_id"]
+    
+    # Get all unique conversations for the current user
+    pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"sender_id": current_user_id},
+                    {"receiver_id": current_user_id}
+                ]
+            }
+        },
+        {
+            "$sort": {"timestamp": -1}
+        },
+        {
+            "$group": {
+                "_id": {
+                    "$cond": [
+                        {"$eq": ["$sender_id", current_user_id]},
+                        "$receiver_id",
+                        "$sender_id"
+                    ]
+                },
+                "last_message": {"$first": "$content"},
+                "timestamp": {"$first": "$timestamp"},
+                "unread_count": {
+                    "$sum": {
+                        "$cond": [
+                            {
+                                "$and": [
+                                    {"$eq": ["$receiver_id", current_user_id]},
+                                    {"$eq": ["$read", False]}
+                                ]
+                            },
+                            1,
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+    
+    chat_list = []
+    for chat in chat_messages.aggregate(pipeline):
+        other_user_id = chat["_id"]
+        other_user = users.find_one({"_id": ObjectId(other_user_id)})
+        if other_user:
+            chat_list.append({
+                "user": other_user,
+                "last_message": chat["last_message"],
+                "timestamp": chat["timestamp"],
+                "unread_count": chat["unread_count"]
+            })
+    
+    return render_template(
+        "chats.html",
+        chats=chat_list,
+        current_user_id=current_user_id
+    )
+
+@app.route("/get-unread-count")
+def get_unread_count():
+    if "user_id" not in session:
+        return jsonify({"count": 0})
+    
+    current_user_id = session["user_id"]
+    unread_count = chat_messages.count_documents({
+        "receiver_id": current_user_id,
+        "read": False
+    })
+    
+    return jsonify({"count": unread_count})
+
+@app.route("/get-chat-list")
+def get_chat_list():
+    if "user_id" not in session:
+        return jsonify({"chats": []})
+    
+    current_user_id = session["user_id"]
+    
+    pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"sender_id": current_user_id},
+                    {"receiver_id": current_user_id}
+                ]
+            }
+        },
+        {
+            "$sort": {"timestamp": -1}
+        },
+        {
+            "$group": {
+                "_id": {
+                    "$cond": [
+                        {"$eq": ["$sender_id", current_user_id]},
+                        "$receiver_id",
+                        "$sender_id"
+                    ]
+                },
+                "unread_count": {
+                    "$sum": {
+                        "$cond": [
+                            {
+                                "$and": [
+                                    {"$eq": ["$receiver_id", current_user_id]},
+                                    {"$eq": ["$read", False]}
+                                ]
+                            },
+                            1,
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+    
+    chat_list = []
+    for chat in chat_messages.aggregate(pipeline):
+        chat_list.append({
+            "user_id": str(chat["_id"]),
+            "unread_count": chat["unread_count"]
+        })
+    
+    return jsonify({"chats": chat_list})
+
+# WebSocket event handlers
+@socketio.on('join')
+def on_join(data):
+    user_id = data['user_id']
+    join_room(user_id)
+
+@socketio.on('message')
+def handle_message(data):
+    if "user_id" not in session:
+        return
+    
+    try:
+        sender_id = session["user_id"]
+        receiver_id = data['receiver_id']
+        content = data['content']
+        timestamp = datetime.utcnow()
+        
+        # Save message to database with read status
+        message = {
+            "sender_id": sender_id,
+            "receiver_id": receiver_id,
+            "content": content,
+            "timestamp": timestamp,
+            "read": False  # Add read status
+        }
+        chat_messages.insert_one(message)
+        
+        # Emit to both sender and receiver
+        message_data = {
+            "sender_id": sender_id,
+            "content": content,
+            "timestamp": timestamp.strftime('%H:%M')
+        }
+        
+        emit('message', message_data, room=sender_id)
+        emit('message', message_data, room=receiver_id)
+        emit('new_message', {}, room=receiver_id)  # Notify receiver about new message
+    except Exception as e:
+        print(f"Message handling error: {str(e)}")
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
