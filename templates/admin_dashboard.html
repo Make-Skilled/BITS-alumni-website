@@ -10,12 +10,21 @@
 
     <!-- Navbar -->
     <nav class="bg-blue-900 text-white p-4 flex justify-between items-center shadow-md">
-        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-        <div class="flex gap-4">
+        <div class="flex items-center">
+            <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+            <span class="ml-4 px-3 py-1 bg-blue-700 rounded-full text-sm">
+                {{ admin_department }} Admin
+            </span>
+        </div>
+        <div class="flex gap-4 items-center">
+            <span class="text-sm">Welcome, {{ admin_name }}</span>
             <a href="#" class="hover:text-gray-300">Home</a>
             <a href="/user-profiles" class="hover:text-gray-300">Users</a>
-            <a href="#" class="hover:text-gray-300">Settings</a>
             <a href="/logout" class="hover:text-gray-300">Logout</a>
+            <a href="{{ url_for('pending_registrations') }}" 
+               class="bg-yellow-500 text-white px-4 py-2 rounded-md">
+                Pending Registrations
+            </a>
         </div>
     </nav>
 
@@ -28,7 +37,7 @@
                     <li><a href="/add-event" class="block bg-blue-600 text-white px-4 py-2 rounded-md text-center">Add Event</a></li>
                     <li><a href="/add-gallery-image" class="block bg-green-600 text-white px-4 py-2 rounded-md text-center">Add Image</a></li>
                     <li><a href="/add-news" class="block bg-yellow-500 text-white px-4 py-2 rounded-md text-center">Add News</a></li>
-                    <li><a href="/add-fund" class="block bg-red-600 text-white px-4 py-2 rounded-md text-center">Add Fund</a></li>
+                    <li><a href="/add-fund" class="block bg-red-600 text-white px-4 py-2 rounded-md text-center">Fund Raise</a></li>
                 </ul>
             </nav>
         </aside>

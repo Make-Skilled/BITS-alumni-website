@@ -21,8 +21,33 @@ donations = db["donations"]
 chats = db["chats"]
 chat_messages = db["chat_messages"]
 
-ADMIN_EMAIL = "admin@bitsalumni.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_CREDENTIALS = {
+    "cse_admin@bitsalumni.com": {
+        "password": "cse_admin123",
+        "department": "CSE",
+        "name": "CSE Administrator"
+    },
+    "ece_admin@bitsalumni.com": {
+        "password": "ece_admin123",
+        "department": "ECE",
+        "name": "ECE Administrator"
+    },
+    "eee_admin@bitsalumni.com": {
+        "password": "eee_admin123",
+        "department": "EEE",
+        "name": "EEE Administrator"
+    },
+    "civil_admin@bitsalumni.com": {
+        "password": "civil_admin123",
+        "department": "CIVIL",
+        "name": "Civil Administrator"
+    },
+    "mech_admin@bitsalumni.com": {
+        "password": "mech_admin123",
+        "department": "MECH",
+        "name": "Mechanical Administrator"
+    }
+}
 
 # Initialize SocketIO
 socketio = SocketIO(app)
@@ -50,8 +75,10 @@ def admin_login():
         email = request.form.get("email")
         password = request.form.get("password")
         
-        if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
+        if email in ADMIN_CREDENTIALS and password == ADMIN_CREDENTIALS[email]["password"]:
             session["admin_logged_in"] = True
+            session["admin_department"] = ADMIN_CREDENTIALS[email]["department"]
+            session["admin_name"] = ADMIN_CREDENTIALS[email]["name"]
             return redirect(url_for("admin_dashboard"))
         else:
             return "Invalid credentials", 401
@@ -73,7 +100,9 @@ def admin_dashboard():
         events=all_events, 
         gallery=all_gallery, 
         funds=all_funds, 
-        news=all_news
+        news=all_news,
+        admin_name=session.get("admin_name"),
+        admin_department=session.get("admin_department")
     )
 
 @app.route("/add-event", methods=["GET", "POST"])
@@ -153,6 +182,33 @@ def view_user(user_id):
     return render_template("view_user_details.html", user=user)
 
 
+@app.route("/pending-registrations")
+def pending_registrations():
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+    
+    # Find all users with status=False (pending approval)
+    pending_users = users.find({"status": False})
+    return render_template("pending_registrations.html", users=pending_users)
+
+@app.route("/approve-user/<user_id>")
+def approve_user(user_id):
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+    
+    users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"status": True}}
+    )
+    return redirect(url_for("pending_registrations"))
+
+@app.route("/reject-user/<user_id>")
+def reject_user(user_id):
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
+    
+    users.delete_one({"_id": ObjectId(user_id)})
+    return redirect(url_for("pending_registrations"))
 
 
 @app.route("/signupdata", methods=["GET", "POST"])
@@ -166,17 +222,17 @@ def signup_data():
         if users.find_one({"email": email}):
             return "Email already exists", 400
         
-        # Use pbkdf2:sha256 method instead of scrypt
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         users.insert_one({
             "name": name,
             "email": email,
             "roll_number": roll_number,
             "password": hashed_password,
-            "created_at": datetime.utcnow()
+            "created_at": datetime.utcnow(),
+            "status": False  # Added status field
         })
         
-        return redirect(url_for("loginpage"))
+        return render_template("registration_pending.html")
     return render_template("signup.html")
 
 @app.route("/logindata", methods=["GET", "POST"])
@@ -187,6 +243,8 @@ def login_data():
         
         user = users.find_one({"email": email})
         if user and check_password_hash(user["password"], password):
+            if not user.get("status", False):
+                return "Your account is pending approval", 401
             session["user_id"] = str(user["_id"])
             session["email"] = user["email"]
             return redirect(url_for("landing"))
